@@ -20,5 +20,6 @@ $('.js-stars').on('addStar', function() {
     var elem = this;
     var star = document.createElement('img');
     star.setAttribute('src', '/img/star.gif')
+    star.setAttribute('alt', 'star')
     elem.appendChild(star);
 });
