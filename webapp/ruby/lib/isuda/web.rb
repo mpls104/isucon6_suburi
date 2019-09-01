@@ -235,6 +235,21 @@ module Isuda
       erb :keyword, locals: locals
     end
 
+    def gen_key(keyword)
+      keyword = keyword or halt(400)
+
+      entry = db.xquery(%| select * from entry where keyword = ? |, keyword).first or halt(404)
+      entry[:stars] = load_stars(entry[:keyword])
+      entry[:html] = htmlify(entry[:description])
+
+      locals = {
+          entry: entry,
+      }
+      erb :keyword, locals: locals
+
+    end
+
+
     post '/keyword/:keyword', set_name: true, authenticate: true do
       keyword = params[:keyword] or halt(400)
       is_delete = params[:delete] or halt(400)
@@ -250,11 +265,12 @@ module Isuda
 
     post '/stars' do
       keyword = params[:keyword]
-
-      isuda_keyword_url = URI(settings.isuda_origin)
-      isuda_keyword_url.path = '/keyword/%s' % [Rack::Utils.escape_path(keyword)]
-      res = Net::HTTP.get_response(isuda_keyword_url)
-      halt(404) unless Net::HTTPSuccess === res
+      gen_key(keyword)
+      #
+      # isuda_keyword_url = URI(settings.isuda_origin)
+      # isuda_keyword_url.path = '/keyword/%s' % [Rack::Utils.escape_path(keyword)]
+      # res = Net::HTTP.get_response(isuda_keyword_url)
+      # halt(404) unless Net::HTTPSuccess === res
 
       user_name = params[:user]
       db.xquery(%|
