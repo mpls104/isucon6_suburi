@@ -41,13 +41,6 @@ module Isutar
       end
     end
 
-    get '/initialize' do
-      db.xquery('TRUNCATE star')
-
-      content_type :json
-      JSON.generate(result: 'ok')
-    end
-
     get '/stars' do
       keyword = params[:keyword] || ''
       stars = db.xquery(%| select * from star where keyword = ? |, keyword).to_a
