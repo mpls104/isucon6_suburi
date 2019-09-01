@@ -91,8 +91,7 @@ module Isuda
         ! validation['valid']
       end
 
-      def htmlify(content)
-        keywords = db.xquery(%| select keyword from entry order by character_length(keyword) desc |)
+      def htmlify(keywords, content)
         pattern = keywords.map {|k| Regexp.escape(k[:keyword]) }.join('|')
         kw2hash = {}
         hashed_content = content.gsub(/(#{pattern})/) {|m|
@@ -142,8 +141,9 @@ module Isuda
         LIMIT #{per_page}
         OFFSET #{per_page * (page - 1)}
       |)
+      keywords = db.xquery(%| select keyword from entry order by character_length(keyword) desc |)
       entries.each do |entry|
-        entry[:html] = htmlify(entry[:description])
+        entry[:html] = htmlify(keywords, entry[:description])
         entry[:stars] = load_stars(entry[:keyword])
       end
 
@@ -266,11 +266,6 @@ module Isuda
     post '/stars' do
       keyword = params[:keyword]
       gen_key(keyword)
-      #
-      # isuda_keyword_url = URI(settings.isuda_origin)
-      # isuda_keyword_url.path = '/keyword/%s' % [Rack::Utils.escape_path(keyword)]
-      # res = Net::HTTP.get_response(isuda_keyword_url)
-      # halt(404) unless Net::HTTPSuccess === res
 
       user_name = params[:user]
       db.xquery(%|
