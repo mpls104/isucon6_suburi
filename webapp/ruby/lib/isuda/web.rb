@@ -116,7 +116,7 @@ module Isuda
 
       def load_stars(keyword)
         keyword = keyword || ''
-        stars = db.xquery(%| select * from star where keyword = ? |, keyword).to_a
+        stars = db.xquery(%| select user_name from star where keyword = ? |, keyword).to_a
         stars
       end
 
