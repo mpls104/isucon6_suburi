@@ -23,6 +23,7 @@ module Isuda
     set :session_secret, 'tonymoris'
     set :isupam_origin, ENV['ISUPAM_ORIGIN'] || 'http://localhost:5050'
     set :isutar_origin, ENV['ISUTAR_ORIGIN'] || 'http://localhost:5001'
+    set :isuda_origin, ENV['ISUTAR_ORIGIN'] || 'http://localhost'
     set :show_exceptions, :after_handler
 
     configure :development do
