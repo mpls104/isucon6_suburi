@@ -227,7 +227,8 @@ module Isuda
 
       entry = db.xquery(%| select * from entry where keyword = ? |, keyword).first or halt(404)
       entry[:stars] = load_stars(entry[:keyword])
-      entry[:html] = htmlify(entry[:description])
+      keywords = db.xquery(%| select keyword from entry order by character_length(keyword) desc |)
+      entry[:html] = htmlify(keywords, entry[:description])
 
       locals = {
         entry: entry,
@@ -240,7 +241,8 @@ module Isuda
 
       entry = db.xquery(%| select * from entry where keyword = ? |, keyword).first or halt(404)
       entry[:stars] = load_stars(entry[:keyword])
-      entry[:html] = htmlify(entry[:description])
+      keywords = db.xquery(%| select keyword from entry order by character_length(keyword) desc |)
+      entry[:html] = htmlify(keywords, entry[:description])
 
       locals = {
           entry: entry,
