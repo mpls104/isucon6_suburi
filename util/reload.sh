@@ -1,0 +1,1 @@
+git pull origin master && sudo systemctl restart isuda.ruby.service isutar.ruby.service
