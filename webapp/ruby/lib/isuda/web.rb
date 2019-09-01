@@ -246,5 +246,23 @@ module Isuda
 
       redirect_found '/'
     end
+
+    post '/stars' do
+      keyword = params[:keyword]
+
+      isuda_keyword_url = URI(settings.isuda_origin)
+      isuda_keyword_url.path = '/keyword/%s' % [Rack::Utils.escape_path(keyword)]
+      res = Net::HTTP.get_response(isuda_keyword_url)
+      halt(404) unless Net::HTTPSuccess === res
+
+      user_name = params[:user]
+      db.xquery(%|
+        INSERT INTO star (keyword, user_name, created_at)
+        VALUES (?, ?, NOW())
+      |, keyword, user_name)
+
+      content_type :json
+      JSON.generate(result: 'ok')
+    end
   end
 end
